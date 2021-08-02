@@ -125,7 +125,7 @@ class GUI:
         elif value > 10000:
             font_size = 12
 
-        im_block = self._get_image('block.png', 300, 300)
+        im_block = self._get_image('block.png', 100, 100)
         label = tkinter.Label(self.canvas_root, image=im_block, bg=bg_color_str, width=100, height=100, 
             text=str(value), font='Helvetica -%d bold' % font_size, fg=fg_color_str, compound=tkinter.CENTER)
 
