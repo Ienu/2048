@@ -1,4 +1,18 @@
-#!/usr/bin/python3
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+# Copyright (c). All Rights Reserved.
+# -----------------------------------------------------
+# File Name:        core.py
+# Creator:          Wenyu Li
+# Version:          0.1
+# Created:          2021/08/02
+# Description:      core program for 2048 game
+# Function List:    class Core
+# History:
+#   <author>      <version>       <time>          <description>
+#   Wenyu Li      0.1             2021/08/02       create
+# -----------------------------------------------------
 
 import numpy as np
 import random
@@ -99,6 +113,7 @@ class Core:
 
     def _plus(self, lst):
         res = []
+        r = 0
         b_plus = False
         for v in lst:
             if res == []:
@@ -106,17 +121,20 @@ class Core:
             else:
                 if res[-1] == v and b_plus == False:
                     res[-1] += v
-                    if res[-1] == 2048:
+                    r = v * 2
+
+                    if res[-1] == 128:
                         self.suc2048 = True
                     b_plus = True
                 else:
                     res.append(v)
                     b_plus = False
-        return res
+        return res, r
 
 
     def action_up(self):
         suc = False
+        reward = 0
         for col in range(4):
             lst = []
             # push list
@@ -126,7 +144,8 @@ class Core:
                     lst.append(value)
 
             # plus
-            res = self._plus(lst)
+            res, r = self._plus(lst)
+            reward += r
             
             # set
             row = 0
@@ -139,11 +158,14 @@ class Core:
 
             for i in range(row, 4):
                 self.board[i, col] = 0
-        return suc
+
+        # print('up reward = %d' % reward)
+        return suc, reward
 
 
     def action_down(self):
         suc = False
+        reward = 0
         for col in range(4):
             lst = []
             # push list
@@ -153,7 +175,8 @@ class Core:
                     lst.append(value)
 
             # plus
-            res = self._plus(lst)
+            res, r = self._plus(lst)
+            reward += r
             
             # set
             row = 0
@@ -167,11 +190,13 @@ class Core:
             for i in range(row, 4):
                 self.board[3 - i, col] = 0
 
-        return suc
+        # print('down reward = %d' % reward)
+        return suc, reward
 
 
     def action_left(self):
         suc = False
+        reward = 0
         for row in range(4):
             lst = []
             # push list
@@ -181,7 +206,8 @@ class Core:
                     lst.append(value)
 
             # plus
-            res = self._plus(lst)
+            res, r = self._plus(lst)
+            reward += r
             
             # set
             col = 0
@@ -195,11 +221,13 @@ class Core:
             for i in range(col, 4):
                 self.board[row, i] = 0
 
-        return suc
+        # print('left reward = %d' % reward)
+        return suc, reward
 
 
     def action_right(self):
         suc = False
+        reward = 0
         for row in range(4):
             lst = []
             # push list
@@ -209,7 +237,8 @@ class Core:
                     lst.append(value)
 
             # plus
-            res = self._plus(lst)
+            res, r = self._plus(lst)
+            reward += r
             
             # set
             col = 0
@@ -223,7 +252,8 @@ class Core:
             for i in range(col, 4):
                 self.board[row, 3 - i] = 0
 
-        return suc
+        # print('right reward = %d' % reward)
+        return suc, reward
 
 
     def deb_show(self):

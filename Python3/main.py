@@ -1,4 +1,18 @@
-#!/usr/bin/python3
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+# Copyright (c). All Rights Reserved.
+# -----------------------------------------------------
+# File Name:        main.py
+# Creator:          Wenyu Li
+# Version:          0.1
+# Created:          2021/08/02
+# Description:      GUI for 2048 game
+# Function List:    class GUI
+# History:
+#   <author>      <version>       <time>          <description>
+#   Wenyu Li      0.1             2021/08/02       create
+# -----------------------------------------------------
 
 import tkinter
 import tkinter.messagebox
@@ -10,9 +24,9 @@ from core import Core
 
 
 class GUI:
-    def __init__(self):
+    def __init__(self, c=Core(), interact=None):
         # core init
-        self.core = Core()
+        self.core = c
 
         # GUI init
         self.root = tkinter.Tk()
@@ -35,7 +49,8 @@ class GUI:
 
         # button init
         im_button = self._get_image('btn.png', 128, 39)
-        self.btn = tkinter.Button(self.canvas_root, bd=0, image=im_button, width=128, height=39, command=self._new_game)
+        self.btn = tkinter.Button(self.canvas_root, bd=0, image=im_button, 
+            width=128, height=39, command=self._new_game)
         self.btn.place(x=419, y=138)
 
         # last labels
@@ -43,8 +58,13 @@ class GUI:
 
         self.first_win = False
 
+        # interaction
+        if interact != None:
+            self.root.after(1000, interact(self))
+
         # show
         self._show()
+
         self.root.mainloop()
 
 
@@ -56,22 +76,22 @@ class GUI:
 
     def _key_callback(self, event):
         if event.keysym == 'Up':
-            if True == self.core.action_up():
+            if True == self.core.action_up()[0]:
                 self.core.emerge()
                 self._show()
 
         elif event.keysym == 'Left':
-            if True == self.core.action_left():
+            if True == self.core.action_left()[0]:
                 self.core.emerge()
                 self._show()
 
         elif event.keysym == 'Right':
-            if True == self.core.action_right():
+            if True == self.core.action_right()[0]:
                 self.core.emerge()
                 self._show()
 
         elif event.keysym == 'Down':
-            if True == self.core.action_down():
+            if True == self.core.action_down()[0]:
                 self.core.emerge()
                 self._show()
         else:
