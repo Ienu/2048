@@ -5,13 +5,14 @@
 # -----------------------------------------------------
 # File Name:        main.py
 # Creator:          Wenyu Li
-# Version:          0.1
+# Version:          0.2
 # Created:          2021/08/02
 # Description:      GUI for 2048 game
 # Function List:    class GUI
 # History:
 #   <author>      <version>       <time>          <description>
 #   Wenyu Li      0.1             2021/08/02       create
+#   Wenyu Li      0.2             2021/08/04       use size attribute
 # -----------------------------------------------------
 
 import tkinter
@@ -58,12 +59,12 @@ class GUI:
 
         self.first_win = False
 
+        # show
+        self._show()
+        
         # interaction
         if interact != None:
             self.root.after(1000, interact(self))
-
-        # show
-        self._show()
 
         self.root.mainloop()
 
@@ -156,8 +157,8 @@ class GUI:
         for lab in self.labels:
             lab.destroy()
 
-        for row in range(4):
-            for col in range(4):
+        for row in range(self.core.size):
+            for col in range(self.core.size):
                 value = self.core.board[row, col]
                 if value != 0:
                     label = self._block(value)

@@ -5,13 +5,13 @@ import torch.nn.functional as F
 
 
 class ValueNet(nn.Module):
-    def __init__(self):
+    def __init__(self, size=4):
         super().__init__()
 
         self.gamma = 0.99
         self.learning_rate_value = 1e-4
 
-        self.value_layer1 = nn.Linear(16, 256, bias=True)
+        self.value_layer1 = nn.Linear(size*size, 256, bias=True)
         self.value_layer2 = nn.Linear(256, 256, bias=True)
         self.value_layer3 = nn.Linear(256, 256, bias=True)
         self.value_layer4 = nn.Linear(256, 4, bias=True)
