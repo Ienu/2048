@@ -36,15 +36,15 @@ class ValueNet(nn.Module):
         return x
 
 
-    def loss_function(self, v, v_, L):
-        TD_target = L + self.gamma * v_
-        TD_error = torch.pow(TD_target - v, 2)
+    def loss_function(self, q, q_, L):
+        q_target = L + self.gamma * q_
+        TD_error = torch.pow(q_target - q, 2)
         # print('TD error = ', TD_error)
-        # loss = torch.mean(TD_error)
+        loss = torch.mean(TD_error)
         # print('loss = ', loss)
         # ones_tensor = torch.ones_like(TD_error)
         # print('ones_tensor = ', ones_tensor)
-        return TD_error
+        return loss
 
 
     def optimizer(self):
