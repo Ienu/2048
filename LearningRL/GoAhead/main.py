@@ -49,9 +49,9 @@ if __name__ == "__main__":
             if done:
                 print("Episode finished after {} timesteps".format(t+1))
                 print('\r\nQ-table:\n')
-                rl2.show_table()
+                rl2._show_table()
                 # print(rl1.q_table)
-                time.sleep(1)
+                time.sleep(0.1)
                 break
 
     env.close()

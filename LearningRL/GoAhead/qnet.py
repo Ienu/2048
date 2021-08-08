@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
+import logging
 
 
 class Net(nn.Module):
@@ -29,45 +30,93 @@ class DQN:
         self.target_net = Net(n_states, n_actions)
         self.loss_function = nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.eval_net.parameters(), lr=0.01)
+
+        self.memory_count = 0
+        self.memory_capacity = 20
+        self.memory = np.zeros([self.memory_capacity, n_states * 2 + 2])
+        self.cost = []
+        self.learn_step = 0
+        self.learn_update_count = 20
+
+        self.batch_size = 20
+
         self.n_states = n_states
         self.n_actions = n_actions
         self.epsilon = epsilon
         self.gamma = gamma
+        self.ex_eps = 0.1
 
 
     def choose_action(self, x):
         x = torch.unsqueeze(torch.FloatTensor(x), 0)
-        if np.random.uniform() < self.epsilon:
+        if np.random.uniform() < min(self.epsilon, self.ex_eps):
             action_value = self.eval_net.forward(x)
             action = torch.max(action_value, 1)[1].data.numpy()[0]
         else:
             action = np.random.randint(0, self.n_actions)
+
+        self.ex_eps *= 1.1
+        logging.debug('eps = ', self.ex_eps)
         return action
 
 
     def learn(self, state, action, reward, done, next_state):
         # update target net
-        self.target_net.load_state_dict((self.eval_net.state_dict()))
+        if self.learn_step % self.learn_update_count == 0:
+            self.target_net.load_state_dict((self.eval_net.state_dict()))
+        self.learn_update_count += 1
 
-        state = torch.unsqueeze(torch.FloatTensor(state), 0)
-        q_eval = self.eval_net(state)[0][action]
+        # store transition
+        self._store_transition(state, action, reward, next_state)
 
-        next_state = torch.unsqueeze(torch.FloatTensor(next_state), 0)
-        q_next = self.target_net(next_state).detach()
+        # memory full
+        if self.memory_count >= self.memory_capacity:
+            self.memory_count = 0
+            # use memory for batch data training
+            sample_index = np.random.choice(self.memory_capacity, self.batch_size, replace=False)
+            memory = self.memory[sample_index, :]   # state action reward next
 
-        if done:
-            q_target = torch.FloatTensor([reward]).unsqueeze(1)
-        else:
-            q_target = reward + self.gamma * q_next.max(1)[0].unsqueeze(1)
+            State = torch.FloatTensor(memory[:, :self.n_states])
+            Action = torch.LongTensor(memory[:, self.n_states:self.n_states+1])
+            Reward = torch.FloatTensor(memory[:, self.n_states+1:self.n_states+2])
+            Next_State = torch.FloatTensor(memory[:, -self.n_states:])
 
-        loss = self.loss_function(q_eval, q_target)
+            logging.debug('State = ', State)
+            logging.debug('Action = ', Action)
+            logging.debug('Reward = ', Reward)
+            logging.debug('Next State = ', Next_State)
 
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
+            Q_eval = self.eval_net(State).gather(1, Action)
+            Q_next = self.target_net(Next_State).detach()
+            logging.debug('Q_eval = ', Q_eval)
+            logging.debug('Q_next = ', Q_next)
+
+            if done:
+                Q_target = Reward
+            else:
+                Q_target = Reward + self.gamma * Q_next.max(1)[0].unsqueeze(1)
+            logging.debug('Q_target = ', Q_target)
+
+            # self._show_table()
+
+            loss = self.loss_function(Q_eval, Q_target)
+            logging.debug('loss = ', loss)
+
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
+
+            # self._show_table()
 
 
-    def show_table(self):
+    def _store_transition(self, state, action, reward, next_state):
+        transition = np.hstack((state, action, reward, next_state))
+        index = self.memory_count % self.memory_capacity
+        self.memory[index, :] = transition
+        self.memory_count += 1
+
+
+    def _show_table(self):
         for i in range(6):
             q = self.eval_net(torch.unsqueeze(torch.FloatTensor([i]), 0)).detach().numpy()
             print(q)
