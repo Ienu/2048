@@ -20,7 +20,8 @@ class Net(nn.Module):
 
 
     def forward(self, x):
-        x = self.fc1(x)
+        x = torch.log(x + 1) / 16
+        x = self.fc1(x + 1)
         x = F.relu(x)
         x = self.fc3(x)
         x = F.relu(x)
