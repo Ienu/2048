@@ -12,13 +12,33 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import sys
 
+from cnn import CNN
 
 
 class Core:
     def __init__(self):
         self.size = 4
         self.reset()
+        self.cnn = CNN()
 
+        # weight 1
+        # self.weights = np.array([
+        #     [1.5, 1.2, 1.2, 1.5],
+        #     [1.2, 1.0, 1.0, 1.2],
+        #     [1.0, 0.8, 0.8, 1.0],
+        #     [0.8, 0.6, 0.6, 0.8]])
+        # weight 2
+        self.weights = np.array([
+            [2.0, 1.8, 1.8, 2.0],
+            [1.6, 1.4, 1.4, 1.6],
+            [1.2, 1.0, 1.0, 1.2],
+            [0.8, 0.6, 0.6, 0.8]])
+        # # weight 3
+        # self.weights = np.array([
+        #     [2.0, 1.8, 1.8, 2.0],
+        #     [1.6, 1.4, 1.4, 1.6],
+        #     [1.2, 1.0, 1.0, 1.2],
+        #     [1.0, 1.0, 1.0, 1.0]])
 
     def reset(self):
         self.score = 0
@@ -158,8 +178,14 @@ class Core:
             for i in range(row, self.size):
                 self.board[i, col] = 0
 
+        # reward -= self.cnn._eval(self.board)
         # print('up reward = %d' % reward)
-        return suc, reward
+        ext_reward = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                ext_reward += self.board[i, j] * self.weights[i, j]
+
+        return suc, ext_reward
 
 
     def action_down(self):
@@ -189,8 +215,14 @@ class Core:
             for i in range(row, self.size):
                 self.board[self.size - 1 - i, col] = 0
 
+        # reward -= self.cnn._eval(self.board)
         # print('down reward = %d' % reward)
-        return suc, reward
+        ext_reward = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                ext_reward += self.board[i, j] * self.weights[i, j]
+
+        return suc, ext_reward
 
 
     def action_left(self):
@@ -221,7 +253,13 @@ class Core:
                 self.board[row, i] = 0
 
         # print('left reward = %d' % reward)
-        return suc, reward
+        # reward -= self.cnn._eval(self.board)
+        ext_reward = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                ext_reward += self.board[i, j] * self.weights[i, j]
+
+        return suc, ext_reward
 
 
     def action_right(self):
@@ -252,7 +290,13 @@ class Core:
                 self.board[row, self.size - 1 - i] = 0
 
         # print('right reward = %d' % reward)
-        return suc, reward
+        # reward -= self.cnn._eval(self.board)
+        ext_reward = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                ext_reward += self.board[i, j] * self.weights[i, j]
+
+        return suc, ext_reward
 
 
     def deb_show(self):
