@@ -14,6 +14,7 @@ import sys
 
 from cnn import CNN
 
+# model prectict control
 
 class Core:
     def __init__(self):
@@ -28,17 +29,24 @@ class Core:
         #     [1.0, 0.8, 0.8, 1.0],
         #     [0.8, 0.6, 0.6, 0.8]])
         # weight 2
-        self.weights = np.array([
-            [2.0, 1.8, 1.8, 2.0],
-            [1.6, 1.4, 1.4, 1.6],
-            [1.2, 1.0, 1.0, 1.2],
-            [0.8, 0.6, 0.6, 0.8]])
-        # # weight 3
+        # self.weights = np.array([
+            # [2.0, 1.8, 1.8, 2.0],
+            # [1.6, 1.4, 1.4, 1.6],
+            # [1.2, 1.0, 1.0, 1.2],
+            # [0.8, 0.6, 0.6, 0.8]])
+        # weight 3
         # self.weights = np.array([
         #     [2.0, 1.8, 1.8, 2.0],
         #     [1.6, 1.4, 1.4, 1.6],
         #     [1.2, 1.0, 1.0, 1.2],
         #     [1.0, 1.0, 1.0, 1.0]])
+        # weight 4
+        self.weights = np.array([
+            [4.0, 3.2, 3.2, 4.0],
+            [2.5, 1.9, 1.9, 2.5],
+            [1.4, 1.0, 1.0, 1.4],
+            [0.6, 0.6, 0.6, 0.6]])
+
 
     def reset(self):
         self.score = 0
@@ -185,7 +193,13 @@ class Core:
             for j in range(self.size):
                 ext_reward += self.board[i, j] * self.weights[i, j]
 
-        return suc, ext_reward
+        # ext_reward2 = 0
+        # for i in range(self.size):
+        #     for j in range(self.size - 1):
+        #         ext_reward2 += math.fabs(self.board[i, j] - self.board[i, j + 1])
+                # ext_reward2 += math.fabs(self.board[j, i] - self.board[j + 1, i])
+
+        return suc, ext_reward #+ reward / 2
 
 
     def action_down(self):
@@ -222,7 +236,13 @@ class Core:
             for j in range(self.size):
                 ext_reward += self.board[i, j] * self.weights[i, j]
 
-        return suc, ext_reward
+        # ext_reward2 = 0
+        # for i in range(self.size):
+        #     for j in range(self.size - 1):
+        #         ext_reward2 += math.fabs(self.board[i, j] - self.board[i, j + 1])
+                # ext_reward2 += math.fabs(self.board[j, i] - self.board[j + 1, i])
+
+        return suc, ext_reward #+ reward / 2
 
 
     def action_left(self):
@@ -259,7 +279,13 @@ class Core:
             for j in range(self.size):
                 ext_reward += self.board[i, j] * self.weights[i, j]
 
-        return suc, ext_reward
+        # ext_reward2 = 0
+        # for i in range(self.size):
+        #     for j in range(self.size - 1):
+        #         ext_reward2 += math.fabs(self.board[i, j] - self.board[i, j + 1])
+                # ext_reward2 += math.fabs(self.board[j, i] - self.board[j + 1, i])
+
+        return suc, ext_reward #+ reward / 2
 
 
     def action_right(self):
@@ -296,7 +322,13 @@ class Core:
             for j in range(self.size):
                 ext_reward += self.board[i, j] * self.weights[i, j]
 
-        return suc, ext_reward
+        # ext_reward2 = 0
+        # for i in range(self.size):
+        #     for j in range(self.size - 1):
+        #         ext_reward2 += math.fabs(self.board[i, j] - self.board[i, j + 1])
+                # ext_reward2 += math.fabs(self.board[j, i] - self.board[j + 1, i])
+
+        return suc, ext_reward #+ reward / 2
 
 
     def deb_show(self):
