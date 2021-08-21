@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
         episode_history = []
         for t in range(10000):
-            if t % 100 == 0:
+            if t % 50 == 0 or t > 4000:
                 env.render(fresh_time=FRESH_TIME)
 
             # action = np.random.randint(0, 4)
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             time_end = time.time()
             avg_action_time += time_end - time_start
 
-            # print('action = ', action, end=' ')
+            # print('\taction = ', action)
 
             # print(' = ', action_vec.detach().numpy())
 
@@ -93,6 +93,13 @@ if __name__ == '__main__':
 
             if done:
                 env.render()
+
+                hist = {}
+                hist['state'] = observation.copy()
+                hist['action'] = action            
+
+                episode_history.append(hist)
+
                 # print("Episode finished after {} timesteps".format(t+1), end=' ')
                 acc_score += env.core.score
                 if env.core.score > best_score:
@@ -116,7 +123,7 @@ if __name__ == '__main__':
                 break
 
     # replay
-    history_load = np.load('robust_0819_2331_10252_512.npy', allow_pickle=True)
+    history_load = np.load('robust_0821_1200_61136_4096.npy', allow_pickle=True)
     # print(history_load)
     # input()
     env.reset()

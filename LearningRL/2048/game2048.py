@@ -22,30 +22,17 @@ class Core:
         self.reset()
         self.cnn = CNN()
 
-        # weight 1
-        # self.weights = np.array([
-        #     [1.5, 1.2, 1.2, 1.5],
-        #     [1.2, 1.0, 1.0, 1.2],
-        #     [1.0, 0.8, 0.8, 1.0],
-        #     [0.8, 0.6, 0.6, 0.8]])
-        # weight 2
-        # self.weights = np.array([
-            # [2.0, 1.8, 1.8, 2.0],
-            # [1.6, 1.4, 1.4, 1.6],
-            # [1.2, 1.0, 1.0, 1.2],
-            # [0.8, 0.6, 0.6, 0.8]])
-        # weight 3
-        # self.weights = np.array([
-        #     [2.0, 1.8, 1.8, 2.0],
-        #     [1.6, 1.4, 1.4, 1.6],
-        #     [1.2, 1.0, 1.0, 1.2],
-        #     [1.0, 1.0, 1.0, 1.0]])
-        # weight 4
+        # weight 2 Best
         self.weights = np.array([
-            [4.0, 3.2, 3.2, 4.0],
-            [2.5, 1.9, 1.9, 2.5],
-            [1.4, 1.0, 1.0, 1.4],
-            [0.6, 0.6, 0.6, 0.6]])
+            [2.0, 1.8, 1.8, 2.0],
+            [1.6, 1.4, 1.4, 1.6],
+            [1.2, 1.0, 1.0, 1.2],
+            [0.8, 0.6, 0.6, 0.8]])
+        # self.weights = np.array([
+        #     [10.0, 8.9, 8.9, 10.0],
+        #     [4.4, 4.1, 4.1, 4.4],
+        #     [2.0, 1.7, 1.7, 2.0],
+        #     [0.8, 0.5, 0.5, 0.8]])
 
 
     def reset(self):
@@ -157,6 +144,21 @@ class Core:
                     res.append(v)
                     b_plus = False
         return res, r
+
+
+    def action(self, idx):
+        if idx == 0:
+            return self.action_up()
+        elif idx == 1:
+            return self.action_left()
+        elif idx == 2:
+            return self.action_right()
+        elif idx == 3:
+            return self.action_down()
+        else:
+            print('ACTION INDEX ERROR!')
+            exit(0)
+
 
 
     def action_up(self):
