@@ -53,41 +53,23 @@ if __name__ == '__main__':
             if t % 50 == 0 or t > 4000:
                 env.render(fresh_time=FRESH_TIME)
 
-            # action = np.random.randint(0, 4)
-            # print('observation = ', observation)
-            # state = list(observation.flat)
-            # print('state = ', state)
-            # action = rl.choose_action(state)
             time_start = time.time()
-            action = rl.choose_action(observation)
-            # action_vec = cnn.forward(torch.from_numpy(observation).unsqueeze(0).unsqueeze(0).float())
-            # action = np.argmax(action_vec.detach().numpy())
-    
+            action = rl.choose_action(observation)    
             time_end = time.time()
             avg_action_time += time_end - time_start
-
-            # print('\taction = ', action)
-
-            # print(' = ', action_vec.detach().numpy())
 
             hist = {}
             hist['state'] = observation.copy()
             hist['action'] = action            
 
             episode_history.append(hist)
-            # print('episode history = ', episode_history)
-
-            # action = cnn.choose_action(observation)
-            # c = input()
 
             time_start = time.time()
             observation_, reward, done, info = env.step(action)
             time_end = time.time()
             avg_step_time += time_end - time_start
-            # print('reward = ', reward)
 
             state_ = list(observation_.flat)
-            # rl.learn(state, action, reward, done, state_)
 
             observation = observation_
 
@@ -100,7 +82,6 @@ if __name__ == '__main__':
 
                 episode_history.append(hist)
 
-                # print("Episode finished after {} timesteps".format(t+1), end=' ')
                 acc_score += env.core.score
                 if env.core.score > best_score:
                     best_score = env.core.score
@@ -124,19 +105,16 @@ if __name__ == '__main__':
 
     # replay
     history_load = np.load('robust_0821_1200_61136_4096.npy', allow_pickle=True)
-    # print(history_load)
-    # input()
     env.reset()
-    # replay_speed = 1
-    for i in range(20):
-        state = history_load[i - 20]['state']
-        action = history_load[i - 20]['action']
+    input()
+    replay_speed = 1
+    for i in range(len(history_load)):
+        state = history_load[i]['state']
+        action = history_load[i]['action']
         print('eps %d, action = %d' % (i - 20, action))
-        # print(state)
         env.core.board = state
-        env.render(fresh_time=FRESH_TIME)
-        # if i > 45:
-        input()
+        if i % replay_speed == 0:
+            env.render(fresh_time=FRESH_TIME)
 
     input()
     env.close()
