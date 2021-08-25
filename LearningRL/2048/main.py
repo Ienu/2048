@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
         episode_history = []
         for t in range(10000):
-            if t % 50 == 0 or t > 4000:
+            if t % 10 == 0 or t > 4000:
                 env.render(fresh_time=FRESH_TIME)
 
             time_start = time.time()
@@ -104,14 +104,14 @@ if __name__ == '__main__':
                 break
 
     # replay
-    history_load = np.load('robust_0821_1200_61136_4096.npy', allow_pickle=True)
+    history_load = np.load('robust_0821_1400_157556_8192.npy', allow_pickle=True)
     env.reset()
     input()
-    replay_speed = 1
+    replay_speed = 5
     for i in range(len(history_load)):
         state = history_load[i]['state']
         action = history_load[i]['action']
-        print('eps %d, action = %d' % (i - 20, action))
+        # print('eps %d, action = %d' % (i - 20, action))
         env.core.board = state
         if i % replay_speed == 0:
             env.render(fresh_time=FRESH_TIME)
